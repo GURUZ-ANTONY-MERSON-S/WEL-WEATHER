@@ -1,0 +1,218 @@
+/**
+ * WEL-Weather v1.0 - Core Components & Design System
+ */
+
+:root {
+  --bg-dark: #0F1012;
+  --bg-card: #1A1B1E;
+  --bg-card-hover: #222328;
+  --border-glass: rgba(255, 255, 255, 0.05);
+  --border-glass-bright: rgba(255, 255, 255, 0.08);
+  --text-main: #f3f4f6;
+  --text-muted: #9ca3af;
+  --text-dark: #0F1012;
+  
+  --accent-blue: #6366f1;
+  --accent-cyan: #818cf8;
+  --accent-green: #22c55e;
+  --accent-yellow: #eab308;
+  --accent-orange: #f97316;
+  --accent-red: #ef4444;
+  
+  --glow-blue: rgba(99, 102, 241, 0.2);
+  --glow-cyan: rgba(129, 140, 248, 0.2);
+  --glow-green: rgba(34, 197, 150, 0.2);
+  --glow-yellow: rgba(234, 179, 8, 0.2);
+  --glow-red: rgba(239, 68, 68, 0.2);
+  
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-display: 'Space Grotesk', var(--font-sans);
+  --font-mono: 'JetBrains Mono', monospace;
+  
+  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.15), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 12px 24px -4px rgba(0, 0, 0, 0.4), 0 8px 12px -3px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 24px 48px -8px rgba(0, 0, 0, 0.6), 0 12px 24px -4px rgba(0, 0, 0, 0.4);
+  
+  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  --border-radius: 2rem;
+}
+
+/* Base resets & styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Glassmorphism utility */
+.glass {
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border-glass);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-lg);
+  transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
+}
+
+.glass:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-glass-bright);
+}
+
+/* Common Card layouts */
+.card {
+  padding: 1.5rem;
+  overflow: hidden;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  padding-bottom: 0.75rem;
+}
+
+.card-header h2, .card-header h3 {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.15rem;
+  letter-spacing: -0.02em;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Glowing dots */
+.glow-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  position: relative;
+}
+
+.glow-dot.cyan {
+  background-color: var(--accent-cyan);
+  box-shadow: 0 0 10px var(--accent-cyan);
+  animation: pulse-cyan 2s infinite ease-in-out;
+}
+
+/* Button UI */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+  color: #ffffff;
+  font-weight: 600;
+  box-shadow: 0 4px 14px var(--glow-blue);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.btn-primary:active {
+  transform: translateY(0);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text-main);
+  border: 1px solid var(--border-glass);
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: var(--border-glass-bright);
+}
+
+/* Custom Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.badge-cyan {
+  background-color: rgba(6, 182, 212, 0.1);
+  color: var(--accent-cyan);
+  border: 1px solid rgba(6, 182, 212, 0.2);
+}
+
+/* Animations */
+@keyframes pulse-cyan {
+  0%, 100% {
+    box-shadow: 0 0 5px var(--accent-cyan);
+    opacity: 0.8;
+  }
+  50% {
+    box-shadow: 0 0 15px var(--accent-cyan);
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid rgba(255, 255, 255, 0.05);
+  border-top-color: var(--accent-blue);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}

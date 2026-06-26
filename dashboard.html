@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WEL-Weather | Command Center</title>
+  
+  <!-- Premium Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body class="dashboard-body">
+  
+  <!-- Dashboard Grid/Particles Background -->
+  <div class="dashboard-bg"></div>
+  <div class="glow-orb orb-1"></div>
+  <div class="glow-orb orb-2"></div>
+
+  <!-- Main Navigation / Header -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <div class="logo-area" id="logoArea">
+          <img src="/assets/logo/wel-weather-logo.png" alt="WEL-Weather Logo" class="logo-img" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\'http://www.w3.org/2000/svg\' width=\'100\' height=\'100\' viewBox=\'0 0 24 24\' fill=\'none\' stroke=\'%233b82f6\' stroke-width=\'1.5\' stroke-linecap=\'round\' stroke-linejoin=\'round\'><path d=\'M17.5 19A3.5 3.5 0 0 0 21 15.5c0-2.79-2.54-4.5-5-4.5-.42-1.89-1.76-3.5-3.5-4.08a4.5 4.5 0 0 0-6.75 3.33A5 5 0 0 0 2 15.5C2 18.1 4.4 20 7 20h10.5c.33 0 .66-.03.97-.1\'/></svg>'">
+          <span class="logo-text">WEL-Weather</span>
+        </div>
+        <div class="time-block">
+          <span id="current-date" class="date-lbl">Loading date...</span>
+          <span id="current-time" class="time-lbl">00:00:00</span>
+        </div>
+      </div>
+      
+      <!-- Search Bar and Controls -->
+      <div class="header-center">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" id="search-input" placeholder="Search meteorological station (e.g., Tokyo, Miami)..." autocomplete="off">
+          <button id="locate-btn" class="ctrl-btn" title="Locate current GPS position">🛰️ Locate</button>
+          <button id="search-btn" class="search-trigger">Scan</button>
+          <div class="search-suggestions" id="search-suggestions"></div>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <!-- Interactive Layout Mode Selector -->
+        <div class="mode-toggle-container">
+          <button class="mode-btn active" data-mode="auto" title="Responsive Auto Mode">Auto</button>
+          <button class="mode-btn" data-mode="desktop" title="Force Desktop Grid">Desktop</button>
+          <button class="mode-btn" data-mode="mobile" title="Force Mobile Stack">Mobile</button>
+        </div>
+
+        <div class="user-badge">
+          <span class="status-indicator online"></span>
+          <span class="username-text" id="userBadgeName">Meteorologist</span>
+        </div>
+        <button id="logout-btn" class="logout-btn">
+          <span class="logout-icon">🚪</span> Sign Out
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Notification Banner (Alerts) -->
+  <div class="alerts-banner-container" id="alertsBannerContainer" style="display: none;">
+    <div class="alerts-banner-content">
+      <span class="alert-icon">⚠️</span>
+      <div class="alert-text-carousel" id="weather-alerts-container">
+        <!-- Weather alerts will cycle here -->
+      </div>
+      <button class="alert-close" id="alertCloseBtn">×</button>
+    </div>
+  </div>
+
+  <!-- Primary Dashboard Layout -->
+  <main class="dashboard-grid">
+    
+    <!-- LEFT PANEL: Primary Current Weather & Thunderstorm Engine -->
+    <section class="grid-col-left">
+      
+      <!-- Current Core Conditions -->
+      <div class="card weather-card glass">
+        <div class="card-header">
+          <div class="location-header">
+            <h1 id="current-location-name" class="station-name">Station Offline</h1>
+            <span class="station-coordinates" id="station-coordinates">N/A</span>
+          </div>
+          <span class="badge" id="demo-badge" style="display: none;">Demo Sandbox</span>
+        </div>
+        
+        <div class="weather-display">
+          <div class="temp-section">
+            <div class="temp-wrapper">
+              <span id="current-temp" class="temp-val">--</span>
+              <span class="temp-unit">°C</span>
+            </div>
+            <div class="feels-like-wrapper">
+              <span>Feels Like: </span><strong id="feels-like">--</strong><span>°C</span>
+            </div>
+          </div>
+          
+          <div class="condition-section">
+            <div class="weather-visual-container" id="current-icon-container">
+              <!-- Inline dynamic weather SVG will render here -->
+              <svg class="weather-svg-animate" viewBox="0 0 24 24" width="80" height="80">
+                <circle cx="12" cy="12" r="5" fill="#f59e0b"/>
+              </svg>
+            </div>
+            <div id="current-condition" class="condition-text">Connecting...</div>
+          </div>
+        </div>
+
+        <div class="weather-meta-grid">
+          <div class="meta-item">
+            <span class="meta-icon">💧</span>
+            <div class="meta-info">
+              <label>Humidity</label>
+              <span id="humidity">--%</span>
+            </div>
+          </div>
+          <div class="meta-item">
+            <span class="meta-icon">🌬️</span>
+            <div class="meta-info">
+              <label>Wind Speed</label>
+              <span id="wind-speed">-- km/h</span>
+            </div>
+          </div>
+          <div class="meta-item">
+            <span class="meta-icon">🧭</span>
+            <div class="meta-info">
+              <label>Wind Heading</label>
+              <span id="wind-direction">--°</span>
+            </div>
+          </div>
+          <div class="meta-item">
+            <span class="meta-icon">📈</span>
+            <div class="meta-info">
+              <label>Atm. Pressure</label>
+              <span id="pressure">-- hPa</span>
+            </div>
+          </div>
+          <div class="meta-item">
+            <span class="meta-icon">☁️</span>
+            <div class="meta-info">
+              <label>Cloud Cover</label>
+              <span id="cloud-cover">--%</span>
+            </div>
+          </div>
+          <div class="meta-item">
+            <span class="meta-icon">👁️</span>
+            <div class="meta-info">
+              <label>Visibility</label>
+              <span id="visibility">-- km</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="sun-cycle-container">
+          <div class="sun-element">
+            <span class="sun-icon">🌅</span>
+            <div class="sun-info">
+              <label>Sunrise</label>
+              <span id="sunrise">--:-- AM</span>
+            </div>
+          </div>
+          <div class="sun-path-bar">
+            <div class="sun-path-progress" id="sun-path-progress"></div>
+          </div>
+          <div class="sun-element">
+            <span class="sun-icon">🌇</span>
+            <div class="sun-info">
+              <label>Sunset</label>
+              <span id="sunset">--:-- PM</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- THE WEL-WEATHER THUNDERSTORM ENGINE (Signature Feature) -->
+      <div class="card thunderstorm-card glass">
+        <div class="card-header border-cyan">
+          <div class="card-title-group">
+            <span class="glow-dot cyan"></span>
+            <h2>Thunderstorm Instability Engine</h2>
+          </div>
+          <span class="badge badge-cyan" id="instability-method-badge">Estimated Engine</span>
+        </div>
+        
+        <div class="thunderstorm-risk-body">
+          <div class="risk-summary-new">
+            <!-- Left: Circular Display -->
+            <div class="risk-circle-container">
+              <div class="risk-circle" id="risk-circle-element">
+                <span class="risk-val" id="thunderstorm-risk-percent">0%</span>
+                <span class="risk-unit">RISK SCORE</span>
+              </div>
+            </div>
+            <!-- Right: Risk Level / Status details -->
+            <div class="risk-details-box">
+              <div class="risk-level-badge-row">
+                <span class="risk-level-title" id="thunderstorm-risk-level">Low Risk</span>
+              </div>
+              <span class="risk-level-indicator" id="thunderstorm-risk-indicator">● Stable Atmosphere</span>
+            </div>
+          </div>
+
+          <!-- Risk Gauge Scale (Color Range with Pointer Arrow) -->
+          <div class="risk-gauge-container">
+            <div class="risk-gauge-track-wrapper">
+              <div class="risk-gauge-track-gradient"></div>
+              <!-- Absolute position moving arrow -->
+              <div class="risk-gauge-pointer-wrapper" id="risk-gauge-pointer-wrapper" style="left: 0%;">
+                <div class="risk-gauge-pointer">▲</div>
+                <div class="risk-gauge-pointer-val" id="risk-gauge-pointer-val">0%</div>
+              </div>
+            </div>
+            <div class="risk-gauge-ticks">
+              <span>Stable (0%)</span>
+              <span>Moderate (35%)</span>
+              <span>High (65%)</span>
+              <span>Severe (100%)</span>
+            </div>
+          </div>
+
+          <!-- Meteorological Indices (CAPE & Lifted Index) -->
+          <div class="indices-grid">
+            <div class="index-item">
+              <div class="index-meta">
+                <span class="index-name">Convective Available Potential Energy (CAPE)</span>
+                <span class="index-status" id="cape-status">Stable</span>
+              </div>
+              <div class="index-display-row">
+                <span class="index-value" id="cape-value">0 J/kg</span>
+                <span class="index-source" id="cape-type">Estimated</span>
+              </div>
+            </div>
+            <div class="index-item">
+              <div class="index-meta">
+                <span class="index-name">Lifted Index (LI)</span>
+                <span class="index-status" id="li-status">Stable</span>
+              </div>
+              <div class="index-display-row">
+                <span class="index-value" id="li-value">0 °C</span>
+                <span class="index-source" id="li-type">Estimated</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Meteorological Explanatory Breakdown -->
+          <div class="instability-explanation">
+            <h3>Diagnostic Breakdown:</h3>
+            <p id="thunderstorm-explanation" class="explanation-p">Analyzing atmospheric profiles... Complete a station query to render full convective diagnostics.</p>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- RIGHT PANEL: Advanced Atmospheric metrics, Marine, AQI, Hourly & 5-Day Forecasts -->
+    <section class="grid-col-right">
+      
+      <!-- Row 1: Atmospheric Details & Air Quality (Dual Column Sub-Grid) -->
+      <div class="sub-grid-row">
+        <!-- Atmospheric Profile Card -->
+        <div class="card atmosphere-card glass">
+          <div class="card-header">
+            <h3>Atmospheric Thermodynamics</h3>
+          </div>
+          <div class="info-list">
+            <div class="info-row">
+              <span class="info-label">Surface Air Temperature</span>
+              <span class="info-value font-mono" id="surface-temp">-- °C</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Dew Point Threshold</span>
+              <span class="info-value font-mono" id="dew-point">-- °C</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Relative Humidity</span>
+              <span class="info-value font-mono" id="relative-humidity">-- %</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Lifted Condensation Level (LCL)</span>
+              <span class="info-value font-mono" id="cloud-base">-- m</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Cloud Ceiling Height</span>
+              <span class="info-value font-mono" id="cloud-ceiling">-- m</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Equivalent Potential Temp (θe)</span>
+              <span class="info-value font-mono" id="theta-e">-- K</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Precipitable Water Vapor (PWV)</span>
+              <span class="info-value font-mono" id="precipitable-water">-- mm</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Sea Surface Temp (Marine SST)</span>
+              <span class="info-value font-mono" id="sea-temp">-- °C</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Air Quality Card -->
+        <div class="card aqi-card glass">
+          <div class="card-header">
+            <h3>Air Quality Index (AQI)</h3>
+          </div>
+          <div class="aqi-body">
+            <div class="aqi-display">
+              <div class="aqi-circle" id="aqi-circle-element">
+                <span class="aqi-val" id="aqi-value">--</span>
+                <span class="aqi-unit">US AQI</span>
+              </div>
+              <div class="aqi-desc">
+                <h4 id="aqi-level">Unscanned</h4>
+                <p id="aqi-advice">Select a coordinates station to run air dispersion index calculations.</p>
+              </div>
+            </div>
+            <div class="aqi-chemical-grid">
+              <div class="chem-item">
+                <span class="chem-name">PM2.5</span>
+                <span class="chem-val" id="pm25">-- µg/m³</span>
+              </div>
+              <div class="chem-item">
+                <span class="chem-name">PM10</span>
+                <span class="chem-val" id="pm10">-- µg/m³</span>
+              </div>
+              <div class="chem-item">
+                <span class="chem-name">Ozone (O₃)</span>
+                <span class="chem-val" id="ozone">-- µg/m³</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hourly Forecast Card (Horizontal Scroll) -->
+      <div class="card hourly-card glass">
+        <div class="card-header">
+          <h3>24-Hour Synoptic Forecast</h3>
+          <span class="header-hint">Drag or swipe to scroll</span>
+        </div>
+        <div class="hourly-forecast-scroll" id="hourly-container">
+          <!-- Dynamic hourly cards will populate here -->
+          <div class="forecast-placeholder">Loading synoptic charts...</div>
+        </div>
+      </div>
+
+      <!-- 5-Day Trend Forecast Card -->
+      <div class="card forecast-card glass">
+        <div class="card-header">
+          <h3>5-Day Meteorological Trend</h3>
+        </div>
+        <div class="forecast-list" id="forecast-container">
+          <!-- Dynamic day columns/rows will populate here -->
+          <div class="forecast-placeholder">Synthesizing meteorological model records...</div>
+        </div>
+      </div>
+      
+    </section>
+
+    <!-- Climate Intelligence & Suggestions Card (Positioned at the bottom to minimize page scroll) -->
+    <div class="card climate-suggestions-card glass">
+      <div class="card-header border-indigo">
+        <div class="card-title-group">
+          <span class="glow-dot indigo"></span>
+          <h2>Climate Recommendations & Lifestyle Guidance</h2>
+        </div>
+      </div>
+      <div class="climate-suggestions-body">
+        <div class="suggestion-meta-header">
+          <div class="climate-badge temperate" id="climate-state-badge">N/A</div>
+          <p class="climate-state-desc" id="climate-state-summary">Enter a location to analyze climate suggestions.</p>
+        </div>
+        
+        <div class="suggestions-grid">
+          <!-- Apparel Card -->
+          <div class="suggestion-box">
+            <div class="suggestion-icon">👕</div>
+            <div class="suggestion-info">
+              <h4>Apparel Suggestions</h4>
+              <p id="suggest-apparel">--</p>
+            </div>
+          </div>
+          
+          <!-- Activities Card -->
+          <div class="suggestion-box">
+            <div class="suggestion-icon">🚴</div>
+            <div class="suggestion-info">
+              <h4>Activities & Recreation</h4>
+              <p id="suggest-activities">--</p>
+            </div>
+          </div>
+
+          <!-- Health & Safety Card -->
+          <div class="suggestion-box">
+            <div class="suggestion-icon">🏥</div>
+            <div class="suggestion-info">
+              <h4>Health & Safety</h4>
+              <p id="suggest-health">--</p>
+            </div>
+          </div>
+
+          <!-- Home & Environment Card -->
+          <div class="suggestion-box">
+            <div class="suggestion-icon">🏠</div>
+            <div class="suggestion-info">
+              <h4>Home & Environment</h4>
+              <p id="suggest-home">--</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Station Footer -->
+  <footer class="app-footer">
+    <div class="footer-content">
+      <p>&copy; 2026 WEL-Weather Meteorological Services. Fully client-side processing active.</p>
+      <div class="footer-links">
+        <span>OpenWeather Map API</span>
+        <span class="separator">|</span>
+        <span>Open-Meteo Meteorological Research</span>
+        <span class="separator">|</span>
+        <span>Version 1.0.0 (Global Enterprise build)</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="/js/config.js"></script>
+  <script src="/js/atmosphere.js"></script>
+  <script src="/js/thunderstorm.js"></script>
+  <script src="/js/weather.js"></script>
+  <script src="/js/forecast.js"></script>
+  <script src="/js/ui.js"></script>
+</body>
+</html>
