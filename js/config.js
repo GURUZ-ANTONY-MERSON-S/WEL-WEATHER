@@ -6,7 +6,7 @@
 const CONFIG = {
   // Replace with your actual OpenWeatherMap API key (v2.5/v3.0)
   // Get one for free at: https://openweathermap.org/
-  OPENWEATHER_API_KEY: 'YOUR_OPENWEATHER_API_KEY',
+  OPENWEATHER_API_KEY: '2326eefe6428b8ad953e5b2691b33b8d',
   
   // Default location: London, UK
   DEFAULT_LOCATION: {
